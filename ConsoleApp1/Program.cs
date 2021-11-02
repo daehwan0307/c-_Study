@@ -14,7 +14,20 @@ namespace ConsoleApp1
             Console.WriteLine("숫자를 입력하세요:");
 
             string input = Console.ReadLine();
-            Console.WriteLine(input);
+
+            int number = Int32.Parse(input);
+
+            if (number < 0)
+                Console.WriteLine("음수이며,");
+            else if (number > 0)
+                Console.WriteLine("양수이며,");
+            else
+                Console.WriteLine("0");
+
+            if (number % 2 == 0)
+                Console.WriteLine("짝수이다.");
+            else
+                Console.WriteLine("홀수이다.");
         }
     }
 }
