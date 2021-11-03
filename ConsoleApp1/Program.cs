@@ -43,17 +43,31 @@ namespace ConsoleApp1
             else
             {
                 di.Create();
+               
             }
 
             string filepath = "C:/Users/daehwan/Desktop/lsm개새/정경창개새.txt";
+            Console.WriteLine("입력할 내용 :");
 
-            string textValue = "오홍석 개새";
-
+            string textValue = Console.ReadLine();
             System.IO.File.WriteAllText(filepath, textValue, Encoding.Default);
 
 
+            StreamWriter ndi = new StreamWriter("C:/Users/daehwan/Desktop/lsm개새/정경창개새.txt");
+            ndi.Write("오홍석_개새");
+            ndi.Close();
+
+            string con = File.ReadAllText(@"C:/Users/daehwan/Desktop/lsm개새/정경창개새.txt");
+            Console.Write("변경후:");
+            Console.WriteLine(con);
 
 
+
+            string[] lsmtask = con.Split('_');
+            Console.WriteLine(lsmtask[0]);
+            Console.WriteLine(lsmtask[1]);
+
+           
         }
     }
    
