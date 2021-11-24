@@ -26,5 +26,10 @@ namespace ConsoleApp1
         {
 
         }
+
+        private void tbDataServer_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

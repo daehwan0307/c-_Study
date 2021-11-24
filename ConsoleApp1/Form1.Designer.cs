@@ -54,6 +54,7 @@
             this.tbDataServer.Name = "tbDataServer";
             this.tbDataServer.Size = new System.Drawing.Size(408, 21);
             this.tbDataServer.TabIndex = 1;
+            this.tbDataServer.TextChanged += new System.EventHandler(this.tbDataServer_TextChanged);
             // 
             // label5
             // 
