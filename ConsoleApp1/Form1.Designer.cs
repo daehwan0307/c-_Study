@@ -1,4 +1,4 @@
-﻿namespace ConsoleApp1
+﻿namespace USB
 {
     partial class Form1
     {
@@ -28,64 +28,44 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.gbDataServer = new System.Windows.Forms.GroupBox();
-            this.tbDataServer = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.gbDataServer.SuspendLayout();
+            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
-            // gbDataServer
+            // listBox1
             // 
-            this.gbDataServer.Controls.Add(this.tbDataServer);
-            this.gbDataServer.Controls.Add(this.label5);
-            this.gbDataServer.ForeColor = System.Drawing.Color.Black;
-            this.gbDataServer.Location = new System.Drawing.Point(35, 123);
-            this.gbDataServer.Name = "gbDataServer";
-            this.gbDataServer.Size = new System.Drawing.Size(643, 54);
-            this.gbDataServer.TabIndex = 2;
-            this.gbDataServer.TabStop = false;
-            this.gbDataServer.Text = " Data Server ";
-            this.gbDataServer.Enter += new System.EventHandler(this.gbDataServer_Enter);
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.ItemHeight = 12;
+            this.listBox1.Location = new System.Drawing.Point(65, 73);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.Size = new System.Drawing.Size(120, 88);
+            this.listBox1.TabIndex = 0;
+            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
-            // tbDataServer
+            // richTextBox1
             // 
-            this.tbDataServer.Location = new System.Drawing.Point(153, 19);
-            this.tbDataServer.Margin = new System.Windows.Forms.Padding(4);
-            this.tbDataServer.Name = "tbDataServer";
-            this.tbDataServer.Size = new System.Drawing.Size(408, 21);
-            this.tbDataServer.TabIndex = 1;
-            this.tbDataServer.TextChanged += new System.EventHandler(this.tbDataServer_TextChanged);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.ForeColor = System.Drawing.Color.Black;
-            this.label5.Location = new System.Drawing.Point(82, 23);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(64, 12);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "Domain :  ";
-            this.label5.Click += new System.EventHandler(this.label5_Click);
+            this.richTextBox1.Location = new System.Drawing.Point(444, 73);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(100, 96);
+            this.richTextBox1.TabIndex = 1;
+            this.richTextBox1.Text = "";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(721, 491);
-            this.Controls.Add(this.gbDataServer);
+            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.listBox1);
             this.Name = "Form1";
             this.Text = "Form1";
-            this.gbDataServer.ResumeLayout(false);
-            this.gbDataServer.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox gbDataServer;
-        private System.Windows.Forms.TextBox tbDataServer;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }
