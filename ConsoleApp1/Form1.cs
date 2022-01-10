@@ -5,121 +5,75 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO.Ports;  //시리얼통신을 위해 추가해줘야 함
 
-using LibUsbDotNet;
-using LibUsbDotNet.Info;
-using LibUsbDotNet.Main;
-
-namespace USB
+namespace Serial_Communication
 {
     public partial class Form1 : Form
     {
-
-        public static UsbDevice usbDevice;
-        public static UsbRegistry [] usbRegistry;
-        public static int nIdx;
-        public UsbEndpointReader reader;
-        delegate void txtBox(RichTextBox tb, string text);
-
         public Form1()
         {
             InitializeComponent();
-
-            //컴퓨터에 연결된 USB 모든장치 로드
-            UsbRegDeviceList allDevice = UsbDevice.AllDevices;
-            usbRegistry = new UsbRegistry[allDevice.Count];
-
-            int cntUsb = 0;
-            //장치들을 하나씩 돌아가면서 조회
-            foreach (UsbRegistry tmpUsbRegistry in allDevice)
-            {
-                //해당 USB가 정상적으로 열리면
-                if(tmpUsbRegistry.Open(out usbDevice))
-                {
-                    //항목들을 하나씩 리스트박스에 추가
-                    usbRegistry[cntUsb] = tmpUsbRegistry;
-                    listBox1.Items.Add(usbRegistry[cntUsb].FullName);
-                }
-                cntUsb++;
-            }
-
-            UsbDevice.Exit();
         }
 
-
-        public void setText(RichTextBox txt, string str)
+        private void Form1_Load(object sender, EventArgs e)  //폼이 로드되면
         {
-            if (richTextBox1.InvokeRequired)
-            {
-                txtBox ci = new txtBox(setText);
-                richTextBox1.Invoke(ci, richTextBox1, str);
-            }
-            else
-            {
-                richTextBox1.Text =  str + "\r\n" + richTextBox1.Text;
-            }
+            comboBox_port.DataSource = SerialPort.GetPortNames(); //연결 가능한 시리얼포트 이름을 콤보박스에 가져오기 
         }
-
-        private void listBox1_SelectedValueChanged(object sender, EventArgs e)
+               
+        private void Button_connect_Click(object sender, EventArgs e)  //통신 연결하기 버튼
         {
-            //리스트박스에서 선택된 USB 인덱스
-            nIdx = ((System.Windows.Forms.ListBox)(sender)).SelectedIndex; 
+            if (!serialPort1.IsOpen)  //시리얼포트가 열려 있지 않으면
+            {
+                serialPort1.PortName = comboBox_port.Text;  //콤보박스의 선택된 COM포트명을 시리얼포트명으로 지정
+                serialPort1.BaudRate = 9600;  //보레이트 변경이 필요하면 숫자 변경하기
+                serialPort1.DataBits = 8;
+                serialPort1.StopBits = StopBits.One;
+                serialPort1.Parity = Parity.None;
+                serialPort1.DataReceived += new SerialDataReceivedEventHandler(serialPort1_DataReceived); //이것이 꼭 필요하다
+                
+                serialPort1.Open();  //시리얼포트 열기
 
-            fldManufacturer.Text = (usbRegistry[nIdx].Device).Info.ManufacturerString;
-            fldRev.Text = usbRegistry[nIdx].Rev.ToString();
-            fldProduct.Text = (usbRegistry[nIdx].Device).Info.ProductString;
-            fldSerial.Text = (usbRegistry[nIdx].Device).Info.SerialString;
-            fldProductID.Text = usbRegistry[nIdx].Pid.ToString();
-            fldVendorID.Text = usbRegistry[nIdx].Vid.ToString();
+                label_status.Text = "포트가 열렸습니다.";
+                comboBox_port.Enabled = false;  //COM포트설정 콤보박스 비활성화
+            }
+            else  //시리얼포트가 열려 있으면
+            {
+                label_status.Text = "포트가 이미 열려 있습니다.";
+            }
+        }
+                
+        private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)  //수신 이벤트가 발생하면 이 부분이 실행된다.
+        {            
+            this.Invoke(new EventHandler(MySerialReceived));  //메인 쓰레드와 수신 쓰레드의 충돌 방지를 위해 Invoke 사용. MySerialReceived로 이동하여 추가 작업 실행.
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void MySerialReceived(object s, EventArgs e)  //여기에서 수신 데이타를 사용자의 용도에 따라 처리한다.
+        {            
+            int ReceiveData = serialPort1.ReadByte();  //시리얼 버터에 수신된 데이타를 ReceiveData 읽어오기
+            richTextBox_received.Text = richTextBox_received.Text + string.Format("{0:X2}", ReceiveData);  //int 형식을 string형식으로 변환하여 출력
+        }
+
+        private void Button_send_Click(object sender, EventArgs e)  //보내기 버튼을 클릭하면
         {
-            if (listBox1.Items.Count == 0)
-            {
-                MessageBox.Show("연결된 USB가 없습니다.");
-                return;
-            }
-
-            //데이터 수신 준비
-            IUsbDevice wholeUsbDevice = usbDevice as IUsbDevice;
-            
-            //USB에서 들어오는 신호를 받기위해 EndPoint 설정
-            reader = usbDevice.OpenEndpointReader(ReadEndpointID.Ep02);
-            ReadEventinitStart();
-
-            if (!ReferenceEquals(wholeUsbDevice, null))
-            {
-                wholeUsbDevice.SetConfiguration(1);
-                wholeUsbDevice.ClaimInterface(0);
-            }
+            serialPort1.Write(textBox_send.Text);  //텍스트박스의 텍스트를 시리얼통신으로 송신
         }
 
-        public void ReadEvent(object sender, EndpointDataEventArgs e)
+        private void Button_disconnect_Click(object sender, EventArgs e)  //통신 연결끊기 버튼
         {
-            //USB에서 신호가 들어오면 활성화 되는 이벤트
-            //string str = UnicodeEncoding.ASCII.GetString(e.Buffer, 0, e.Count);
-            string str  = BitConverter.ToInt64(e.Buffer, 0).ToString();
-            try
+            if (serialPort1.IsOpen)  //시리얼포트가 열려 있으면
             {
-                //받아온 데이터를 기록한다.
-                setText(richTextBox1, str);
+                serialPort1.Close();  //시리얼포트 닫기
 
+                label_status.Text = "포트가 닫혔습니다.";
+                comboBox_port.Enabled = true;  //COM포트설정 콤보박스 활성화
             }
-            catch (System.Exception ex)
+            else  //시리얼포트가 닫혀 있으면
             {
-
+                label_status.Text = "포트가 이미 닫혀 있습니다.";
             }
         }
-
-        public void ReadEventinitStart()
-        {
-            //리더 활성화
-            reader.DataReceivedEnabled = true;
-            //이벤트 핸들러 연결
-            reader.DataReceived += (ReadEvent);
-        }
-
     }
 }
