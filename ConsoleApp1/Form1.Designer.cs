@@ -1,6 +1,6 @@
-﻿namespace SensingWaterLeak
+﻿namespace USB
 {
-    partial class MainLeakInfo
+    partial class Form1
     {
         /// <summary>
         /// 필수 디자이너 변수입니다.
@@ -57,7 +57,6 @@
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(467, 64);
             this.listBox1.TabIndex = 0;
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             this.listBox1.SelectedValueChanged += new System.EventHandler(this.listBox1_SelectedValueChanged);
             // 
             // groupBox1
